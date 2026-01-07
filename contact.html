@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - PhoneZone</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Font */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden; /* Horizontal scroll rokne ke liye */
+        }
+
+        /* --- Entrance Animations (Staggered) --- */
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Floating Background Animation --- */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            animation: float 10s infinite ease-in-out;
+            pointer-events: none; /* Mobile pe clicks rokne se bachane ke liye */
+        }
+        .blob-1 { top: -10%; left: -10%; width: 300px; height: 300px; background: #9333ea; animation-delay: 0s; }
+        .blob-2 { bottom: 10%; right: -10%; width: 250px; height: 250px; background: #c084fc; animation-delay: 2s; }
+        .blob-3 { top: 40%; left: 40%; width: 200px; height: 200px; background: #facc15; opacity: 0.4; animation-delay: 4s; }
+
+        /* Desktop pe bade blobs */
+        @media (min-width: 768px) {
+            .blob-1 { width: 500px; height: 500px; }
+            .blob-2 { width: 400px; height: 400px; }
+            .blob-3 { width: 300px; height: 300px; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20px, -20px); }
+        }
+
+        /* --- Social Icon Hover Animation --- */
+        .social-btn {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .social-btn:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* --- Input Focus Animation --- */
+        .input-group input:focus ~ label,
+        .input-group textarea:focus ~ label,
+        .input-group input:not(:placeholder-shown) ~ label,
+        .input-group textarea:not(:placeholder-shown) ~ label {
+            top: -12px;
+            left: 12px;
+            font-size: 12px;
+            background-color: #fff; /* White background to hide border line */
+            padding: 0 4px;
+            color: #9333ea; /* Purple-600 */
+        }
+
+        /* --- Button Loading Spinner --- */
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top: 3px solid #fff;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- Modal Animation --- */
+        .modal-enter { animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes modalPop {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        /* --- Checkmark Animation --- */
+        .checkmark-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: #4ade80; /* Green-400 */
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+        .checkmark {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 2;
+            stroke: #fff;
+            stroke-miterlimit: 10;
+            box-shadow: inset 0px 0px 0px #4ade80;
+            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+        }
+        .checkmark-check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+        @keyframes stroke { 100% { stroke-dashoffset: 0; } }
+        @keyframes scale { 0%, 100% { transform: none; } 50% { transform: scale3d(1.1, 1.1, 1); } }
+        @keyframes fill { 100% { box-shadow: inset 0px 0px 0px 50px #4ade80; } }
+
+    </style>
+</head>
+
+<body class="bg-gray-50 flex flex-col min-h-screen relative overflow-x-hidden">
+
+    <!-- Navbar (Responsive: Mobile Hamburger / Desktop Menu) -->
+    <nav class="bg-purple-600 shadow-md sticky top-0 z-50 relative">
+        <div class="max-w-7xl mx-auto px-4 md:px-6">
+            <div class="flex justify-between items-center h-16 text-white">
+                <!-- Logo -->
+                <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+                    <img src="https://randomuser.me/api/portraits/men/75.jpg" class="h-10 w-10 rounded-full object-cover border-2 border-yellow-300" alt="Logo">
+                    <span class="font-bold text-xl tracking-wide">PhoneZone</span>
+                </div>
+
+                <!-- Desktop Menu (hidden on mobile) -->
+                <ul class="hidden md:flex space-x-6 md:space-x-8 text-base md:text-lg font-medium items-center">
+                    <li><a href="index.html" class="hover:text-yellow-300 transition duration-300">Home</a></li>
+                    <li><a href="about.html" class="hover:text-yellow-300 transition duration-300">About Us</a></li>
+                    <li><a href="Catalogue.html" class="hover:text-yellow-300 transition duration-300">Catalogue</a></li>
+                    <li><a href="contact.html" class="hover:text-yellow-300 transition duration-300">Contact</a></li>
+                </ul>
+                
+                <!-- Mobile Menu Button (visible on mobile) -->
+                <div class="flex items-center gap-4 md:hidden">
+                    <button onclick="toggleMenu()" class="text-white focus:outline-none">
+                        <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                        <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Dropdown Menu -->
+            <div id="mobile-menu" class="hidden md:hidden bg-purple-700 pb-4 rounded-b-lg">
+                <ul class="flex flex-col space-y-4 px-4 text-white font-medium py-2">
+                    <li><a href="index.html" class="block hover:text-yellow-300">Home</a></li>
+                    <li><a href="about.html" class="block hover:text-yellow-300">About Us</a></li>
+                    <li><a href="Catalogue.html" class="block hover:text-yellow-300">Catalogue</a></li>
+                    <li><a href="contact.html" class="block text-yellow-300">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Background Blobs (Animation & Responsive Size) -->
+    <div class="blob blob-1 opacity-50"></div>
+    <div class="blob blob-2 opacity-50"></div>
+    <div class="blob blob-3 opacity-30"></div>
+
+    <!-- Main Content (Responsive Grid) -->
+    <!-- py-12 mobile, py-20 desktop -->
+    <main class="flex-grow flex items-center justify-center py-12 md:py-20 px-4 md:px-6 relative z-10">
+        <!-- 1 col on mobile, 2 cols on lg screens -->
+        <div class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+            
+            <!-- LEFT SIDE: Info & Socials -->
+            <div class="space-y-8 lg:space-y-10 text-gray-800 w-full">
+                <div class="fade-in-up delay-100 text-center lg:text-left">
+                    <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 lg:mb-6 leading-tight">Get in <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">Touch.</span></h1>
+                    <p class="text-base md:text-lg text-gray-600 leading-relaxed">
+                        Have questions about our products? Want to place a bulk order? <br> We'd love to hear from you.
+                    </p>
+                </div>
+
+                <!-- Contact Details -->
+                <div class="space-y-5 lg:space-y-6 fade-in-up delay-200">
+                    <div class="flex items-start gap-4">
+                        <div class="bg-purple-100 p-3 rounded-full text-purple-600 shadow-sm shrink-0">
+                            <i class="fas fa-phone-alt text-xl w-6 text-center"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg">Phone</h3>
+                            <p class="text-gray-600 break-all">+1 (555) 123-4567</p>
+                            <p class="text-gray-500 text-sm">Mon - Fri, 9am - 6pm</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="bg-purple-100 p-3 rounded-full text-purple-600 shadow-sm shrink-0">
+                            <i class="fas fa-envelope text-xl w-6 text-center"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg">Email</h3>
+                            <p class="text-gray-600 break-all">support@phonezone.com</p>
+                            <p class="text-gray-500 text-sm">We reply within 24 hours</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="bg-purple-100 p-3 rounded-full text-purple-600 shadow-sm shrink-0">
+                            <i class="fas fa-map-marker-alt text-xl w-6 text-center"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg">Office</h3>
+                            <p class="text-gray-600 break-words">123 Tech Street, Digital City</p>
+                            <p class="text-gray-500 text-sm">Innovation Park, 54000</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Icons (Interactive) -->
+                <div class="pt-4 fade-in-up delay-300 flex justify-center lg:justify-start">
+                    <div class="flex gap-4">
+                        <a href="#" class="social-btn w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center text-xl shadow-lg hover:bg-purple-700">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-btn w-12 h-12 rounded-full bg-pink-600 text-white flex items-center justify-center text-xl shadow-lg hover:bg-pink-700">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-btn w-12 h-12 rounded-full bg-blue-400 text-white flex items-center justify-center text-xl shadow-lg hover:bg-blue-500">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-btn w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center text-xl shadow-lg hover:bg-red-700">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT SIDE: Contact Form -->
+            <div class="fade-in-up delay-400 w-full">
+                <form id="contactForm" class="bg-white/80 backdrop-blur-lg p-6 md:p-8 lg:p-10 rounded-3xl shadow-2xl border border-white/50 relative overflow-hidden" onsubmit="handleFormSubmit(event)">
+                    
+                    <!-- Form Header (Decorative) -->
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-yellow-400/20 rounded-bl-full -mr-4 -mt-4"></div>
+                    
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 lg:mb-8 relative z-10 text-center lg:text-left">Send us a message</h2>
+
+                    <!-- Name Input -->
+                    <div class="input-group relative mb-5 lg:mb-6">
+                        <input type="text" id="name" placeholder=" " required class="w-full px-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-purple-500 transition duration-300 text-gray-800 font-medium text-base">
+                        <label for="name" class="absolute left-4 top-4 text-gray-400 transition-all duration-300 pointer-events-none">Your Name</label>
+                    </div>
+
+                    <!-- Email Input -->
+                    <div class="input-group relative mb-5 lg:mb-6">
+                        <input type="email" id="email" placeholder=" " required class="w-full px-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-purple-500 transition duration-300 text-gray-800 font-medium text-base">
+                        <label for="email" class="absolute left-4 top-4 text-gray-400 transition-all duration-300 pointer-events-none">Your Email</label>
+                    </div>
+
+                    <!-- Subject Input -->
+                    <div class="input-group relative mb-5 lg:mb-6">
+                        <input type="text" id="subject" placeholder=" " required class="w-full px-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-purple-500 transition duration-300 text-gray-800 font-medium text-base">
+                        <label for="subject" class="absolute left-4 top-4 text-gray-400 transition-all duration-300 pointer-events-none">Subject</label>
+                    </div>
+
+                    <!-- Message Input -->
+                    <div class="input-group relative mb-6 lg:mb-8">
+                        <textarea id="message" rows="4" placeholder=" " required class="w-full px-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-purple-500 transition duration-300 text-gray-800 font-medium resize-none text-base"></textarea>
+                        <label for="message" class="absolute left-4 top-4 text-gray-400 transition-all duration-300 pointer-events-none">Write your message here...</label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-purple-500/40 transform hover:-translate-y-1 transition duration-300 flex items-center justify-center gap-2 group">
+                        <span>Send Message</span>
+                        <i class="fas fa-paper-plane group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer (Responsive Grid) -->
+    <footer class="bg-purple-900 text-gray-300 pt-10 md:pt-12 lg:pt-16 pb-8 border-t-4 border-yellow-400 mt-auto relative z-20">
+        <div class="max-w-7xl mx-auto px-4 md:px-6">
+            <!-- 1 col on mobile, 4 cols on md+ -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-10 mb-12">
+                <div class="space-y-4 text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start gap-2 mb-4">
+                        <img src="https://randomuser.me/api/portraits/men/75.jpg" class="h-10 w-10 rounded-full border-2 border-yellow-400" alt="Logo">
+                        <span class="text-white text-xl md:text-2xl font-bold tracking-wide">PhoneZone</span>
+                    </div>
+                    <p class="text-sm leading-relaxed">Your one-stop destination for the latest smartphones.</p>
+                </div>
+                <!-- Column 2: Quick Links -->
+                <div class="text-center md:text-left">
+                    <h3 class="text-white text-lg font-bold mb-6 border-b border-purple-700 pb-2 inline-block">Quick Links</h3>
+                    <ul class="space-y-3">
+                        <li><a href="index.html" class="hover:text-yellow-400 transition flex items-center justify-center md:justify-start gap-2"><span class="text-yellow-400">&rsaquo;</span> Home</a></li>
+                        <li><a href="about.html" class="hover:text-yellow-400 transition flex items-center justify-center md:justify-start gap-2"><span class="text-yellow-400">&rsaquo;</span> About Us</a></li>
+                        <li><a href="Catalogue.html" class="hover:text-yellow-400 transition flex items-center justify-center md:justify-start gap-2"><span class="text-yellow-400">&rsaquo;</span> Our Catalogue</a></li>
+                        <li><a href="contact.html" class="hover:text-yellow-400 transition flex items-center justify-center md:justify-start gap-2"><span class="text-yellow-400">&rsaquo;</span> Contact Support</a></li>
+                    </ul>
+                </div>
+                <div class="text-center md:text-left">
+                    <h3 class="text-white text-lg font-bold mb-6 border-b border-purple-700 pb-2 inline-block">Contact Us</h3>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-start justify-center md:justify-start gap-3">
+                            <i class="fas fa-map-marker-alt text-yellow-400 mt-1"></i>
+                            <span>123 Tech Street, Digital City</span>
+                        </li>
+                        <li class="flex items-center justify-center md:justify-start gap-3">
+                            <i class="fas fa-phone text-yellow-400"></i>
+                            <span>+1 (555) 123-4567</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="text-center md:text-left">
+                    <h3 class="text-white text-lg font-bold mb-6 border-b border-purple-700 pb-2 inline-block">Newsletter</h3>
+                    <form class="flex flex-col gap-3" onsubmit="event.preventDefault(); alert('Subscribed!');">
+                        <input type="email" placeholder="Your Email" class="bg-purple-800 text-white px-4 py-2 rounded-lg border border-purple-700 focus:outline-none focus:border-yellow-400">
+                        <button type="submit" class="bg-yellow-400 text-purple-900 font-bold px-4 py-2 rounded-lg hover:bg-yellow-300">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="border-t border-purple-800 pt-8 text-center text-sm text-gray-400">
+                <p>&copy; 2024 PhoneZone. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SUCCESS MODAL (Hidden by default) -->
+    <div id="successModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden opacity-0 transition-opacity duration-300 p-4">
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal()"></div>
+        
+        <!-- Modal Content -->
+        <div class="relative bg-white w-full max-w-sm p-8 rounded-2xl shadow-2xl transform scale-90 transition-transform duration-300 flex flex-col items-center text-center modal-enter">
+            
+            <!-- Animated Checkmark -->
+            <div class="checkmark-wrapper mb-6">
+                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+            </div>
+
+            <h3 class="text-2xl font-bold text-gray-800 mb-2">Message Sent!</h3>
+            <p class="text-gray-500 mb-8">Thanks for reaching out. We'll get back to you shortly.</p>
+            
+            <button onclick="closeModal()" class="bg-purple-600 text-white font-bold px-8 py-3 rounded-xl hover:bg-purple-700 transition shadow-lg w-full">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Mobile Menu
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const menuIcon = document.getElementById('menu-icon');
+            const closeIcon = document.getElementById('close-icon');
+            menu.classList.toggle('hidden');
+            menuIcon.classList.toggle('hidden');
+            closeIcon.classList.toggle('hidden');
+        }
+
+        // Form Submit Animation Logic
+        function handleFormSubmit(e) {
+            e.preventDefault(); // Stop actual submission
+            
+            const btn = document.getElementById('submitBtn');
+            const originalContent = btn.innerHTML;
+            
+            // 1. Change button to Loading State
+            btn.innerHTML = `<div class="spinner"></div> Sending...`;
+            btn.classList.add('cursor-not-allowed', 'opacity-80');
+            btn.disabled = true;
+
+            // 2. Simulate Network Request (2 seconds)
+            setTimeout(() => {
+                // 3. Show Success Modal
+                const modal = document.getElementById('successModal');
+                modal.classList.remove('hidden');
+                // Allow display:flex to apply first, then animate opacity
+                requestAnimationFrame(() => {
+                    modal.classList.remove('opacity-0');
+                });
+
+                // 4. Reset Button & Form
+                btn.innerHTML = originalContent;
+                btn.classList.remove('cursor-not-allowed', 'opacity-80');
+                btn.disabled = false;
+                document.getElementById('contactForm').reset();
+
+            }, 2000);
+        }
+
+        // Close Modal Function
+        function closeModal() {
+            const modal = document.getElementById('successModal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300); // Wait for fade out
+        }
+    </script>
+</body>
+</html>
